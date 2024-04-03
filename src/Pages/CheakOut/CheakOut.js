@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Firebase/UserContext';
 
 const CheakOut = () => {
     const details = useLoaderData()
     const {user} = useContext(AuthContext)
-    const { title, price} = details
+    const {_id, title, price} = details
+    const navigate = useNavigate()
 
     const handleCheackOutOrders=event =>{
         event.preventDefault()
@@ -17,6 +18,7 @@ const CheakOut = () => {
 
         console.log(name , phone,email , textValue)
         const userDetails = {
+            detailsId : _id,
             title,
             price,
             name,
@@ -34,6 +36,8 @@ const CheakOut = () => {
         .then(res =>res.json())
         .then(data => {
             console.log(data)
+            form.reset()
+            navigate('/orders')
         })
         .catch(err => console.error(err))
 

@@ -14,8 +14,26 @@ const Orders = () => {
     }, [user?.email])
     console.log(orders)
     console.log(orders.length)
+
+    const handleDelateBtn =user =>{
+        console.log(`clicked ${user._id}`)
+        const agree = window.confirm(`Are you want to delete ${user.name}`)
+        if(agree){
+            fetch(`http://localhost:5000/cheakout/${user._id}`,{
+                method : 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data=>{
+                if(data.deletedCount > 0){
+                    alert('User Delete Successfully')
+                    const remainingUser = orders.filter(ordersUser => ordersUser._id !== user._id) 
+                    setOrders(remainingUser)
+                }
+            })
+        }
+    }
     return (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mb-10">
             <table className="table">
                 {/* head */}
                 <thead>
@@ -37,20 +55,12 @@ const Orders = () => {
                       orders.map(order =><SingleOrder
                       key={order._id}
                       order={order}
+                      handleDelateBtn={handleDelateBtn}
                       ></SingleOrder>)
                     }
                     
                 </tbody>
-                {/* foot */}
-                <tfoot>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>User</th>
-                        <th>Phone</th>
-                        <th></th>
-                    </tr>
-                </tfoot>
+
 
             </table>
         </div>
