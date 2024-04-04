@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import UserContext, { AuthContext } from '../../Firebase/UserContext';
 
-const SingleOrder = ({order ,handleDelateBtn}) => {
-    const {_id , title ,price ,name , email ,phone,detailsId} = order
-    console.log(detailsId)
+const SingleOrder = ({order ,handleDelateBtn ,handleUpdateStatus}) => {
+    const {user} = useContext(AuthContext)
+    const { title ,price ,name , email ,phone,detailsId,status} = order
+    //console.log(detailsId)
+    
     const [img ,setImg] = useState({})
     useEffect(()=>{
         //jokon databse a data pataice cheackout er maddome tokon id ta patai diyece
@@ -12,18 +15,23 @@ const SingleOrder = ({order ,handleDelateBtn}) => {
         .then(res =>res.json())
         .then(data =>setImg(data.img))
     },[detailsId])
+
     return (
         <tr>
             <th>
                 <label>
-                    <button onClick={ ()=>handleDelateBtn(order)} className=' text-red-400'>X</button>
+                    <button onClick={ ()=>handleDelateBtn(order)} className='btn btn-ghost btn-xs text-red-400'>X</button>
                 </label>
             </th>
             <td>
                 <div className="flex items-center gap-3">
                     <div className="avatar">
                         <div className="mask mask-squircle w-12 h-12">
-                            <img src={img} alt="Avatar Tailwind CSS Component" />
+                            {user?.email ?
+                            <img src={img} alt="" />
+                            :
+                            <p>loding...</p> 
+                        }
                         </div>
                     </div>
                     <div>
@@ -39,7 +47,11 @@ const SingleOrder = ({order ,handleDelateBtn}) => {
             </td>
             <td>{phone}</td>
             <th>
-                <button className="btn btn-ghost btn-xs">details</button>
+                <button 
+                onClick={()=>handleUpdateStatus(order)}
+                className="btn btn-ghost btn-xs">{
+                    status ? status : 'Loading'
+                }</button>
             </th>
         </tr>
     );

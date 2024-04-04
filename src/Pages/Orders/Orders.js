@@ -32,6 +32,26 @@ const Orders = () => {
             })
         }
     }
+    const handleUpdateStatus =order =>{
+        fetch(`http://localhost:5000/cheakout/${order._id}`,{
+                method : 'PATCH',
+                headers : {
+                    'content-type' : 'application/json'
+                },
+                body : JSON.stringify({status : 'Approved'})
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                if(data.modifiedCount > 0){
+                    const remainingUser = orders.filter(ord => ord._id !== order._id)
+                    const updatedId = orders.find(ord => ord._id === order._id)
+                    updatedId.status = 'Approved'
+                    const newOrders = [updatedId , ...remainingUser]
+                    setOrders(newOrders)
+                }
+            })
+    }
     return (
         <div className="overflow-x-auto mb-10">
             <table className="table">
@@ -56,6 +76,7 @@ const Orders = () => {
                       key={order._id}
                       order={order}
                       handleDelateBtn={handleDelateBtn}
+                      handleUpdateStatus={handleUpdateStatus}
                       ></SingleOrder>)
                     }
                     
